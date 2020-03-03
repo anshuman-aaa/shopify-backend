@@ -15,4 +15,6 @@ app.use(hooks);
 app.listen(port, () => {
     console.log("Server isup on port " + port);
 });
-//pid=50410 port=27017
+// pid=50410 port=27017
+// https://git.heroku.com/shopify-api-nodejs.git
+// https://shopify-api-nodejs.herokuapp.com/

@@ -2,11 +2,9 @@ const express = require("express");
 const ShopifyData = require("../Model/index");
 const router = new express.Router();
 
-//post request
-//hospitality req
+//post request to add data
 router.post("/check", async (req, res) => {
   const shopData = new ShopifyData(req.body);
-  // console.log(shopData);
   try {
     await shopData.save();
     res.status(201).send(shopData);
@@ -14,21 +12,18 @@ router.post("/check", async (req, res) => {
     res.status(400).send(e);
   }
 });
+
+//get request to get all the order data
 router.get("/order/data", async (req, res) => {
   let order = [];
-  const orderkey = [];
-  let eventFinalData = {};
   try {
     const event = ShopifyData.find(function(e, data) {
       if (e) res.status(400).send(e);
       let eventFinalData = {};
       eventFinalData.code = 0;
-      let message = [];
-      let eventData = [];
       data.forEach(d => {
         order.push(d);
       });
-      // message.shift();
       eventFinalData.message = order;
       res.status(200).send(eventFinalData);
     });
@@ -36,6 +31,7 @@ router.get("/order/data", async (req, res) => {
     res.status(400).send(e);
   }
 });
+//patch request to update a order
 router.patch("/order/update", async (req, res) => {
   const updates = Object.keys(req.body);
 
@@ -44,14 +40,8 @@ router.patch("/order/update", async (req, res) => {
     if (!shop) {
       return res.status(404).send("error");
     }
-    // console.log(updates);
-    // const shop2 = JSON.parse(shop);
-    // console.log(typeof (shop['email']));
     updates.map(update => {
-
-        console.log(shop[update]);
       shop[update] = req.body[update];
-
     });
     await shop.save();
     res.send(shop);
@@ -59,6 +49,20 @@ router.patch("/order/update", async (req, res) => {
     res.status(400).send(e);
   }
 });
+//delete a order data
+router.delete('/order/:id',  async (req, res) => {
+  try {
+    const shopData = await ShopifyData.findOneAndDelete({ _id: req.params.id})
+    const sendData = {};
+    sendData.id = 0;
+    sendData.message = "order removed successfully";
+    if (!shopData) {
+      res.status(404).send(sendData)
+    }
+    res.send("removed")
+  } catch (e) {
+    res.status(500).send()
+  }
+});
 
 module.exports = router;
-//5e5ba34ca14513317fee58f1
